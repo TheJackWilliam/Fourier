@@ -2,7 +2,7 @@ FourierTransform fourierTransform;
 Waveform wave;
 boolean run = false;
 
-float step, unitLength, freqStep = 0.005, freqRange = 16, unitsPerWindow = 8;
+float step, unitLength, freqStep = 0.005, freqRange = 32, unitsPerWindow = 16, timeToCompute = 4;
 
 void setup() { //<>//
   size(1200,800);
@@ -45,13 +45,21 @@ void setup() { //<>//
 
 void draw() {
   if (run) {
-    // draw backgrounds
-    stroke(20);
-    fill(20);
-    rect(width/2, 0, width, height/2);
-    rect(0, height/2, width/2, height);
-    rect(width/2, height/2, width, height);
-    noFill();  
+    background(20);
+    
+    
+    // draw input wave
+    stroke(255);
+    strokeWeight(1);
+    wave.showFloatWave(0, height*1/4);  
+    
+    //// draw backgrounds
+    //stroke(20);
+    //fill(20);
+    //rect(width/2, 0, width, height/2);
+    //rect(0, height/2, width/2, height);
+    //rect(width/2, height/2, width, height);
+    //noFill();  
     
     // separate windows
     stroke(255);

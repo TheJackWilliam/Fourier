@@ -16,7 +16,7 @@ class FourierTransform {
   public void compute_Y(float _x, float _y) {
     push();
     translate(_x, _y);
-    for (int i = 0; i < step/freqStep/60; i++) {
+    for (int i = 0; i < freqRange/freqStep/60/timeToCompute; i++) {
       if (freq < freqRange) {
         this.complexWave_Y.add(waveform.calcComplex_Y(freq, i == 0));
         freq += freqStep;
@@ -198,8 +198,9 @@ class FourierTransform {
       // this.fourierWaveY.pos.x = width/2; //* unitsPerWindow;
       strokeWeight(2);
       this.fourierWaveY.show(true, true);
-      this.fourierWaveY.offsetPoints_X(1/step * 2*mouseX/width);
+      //this.fourierWaveY.offsetPoints_X(1/step * 2*mouseX/width);
       this.fourierWaveY.update();
+      this.fourierWaveY.points.get(this.fourierWaveY.points.size()-1).x += drawStep/step;
       this.fourierWaveY.deleteExcess();
       drawStep += (float)2*mouseX/width; // += step*unitLength/60 * 2*mouseX/width;
       // frameRate(5);
