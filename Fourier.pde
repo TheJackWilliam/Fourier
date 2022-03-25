@@ -2,7 +2,7 @@ FourierTransform fourierTransform;
 Waveform wave;
 boolean run = false;
 
-float step, unitLength, freqStep = 0.005, freqRange = 32, unitsPerWindow = 5;
+float step, unitLength, freqStep = 0.005, freqRange = 16, unitsPerWindow = 8;
 
 void setup() { //<>//
   size(1200,800);
@@ -12,7 +12,7 @@ void setup() { //<>//
   
   //// Use this for the wave versions
   unitLength = width/2 / unitsPerWindow;
-  step = freqRange*10/unitLength;
+  step = 100/unitLength;
   
   //println(unitLength*unitsPerWindow);
   //println(unitLength/unitsPerWindow/step);

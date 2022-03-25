@@ -191,17 +191,17 @@ class FourierTransform {
       strokeWeight(1);
       this.fourierWaveY.showLine();
       
-      if (drawStep >= width/2 / step) {
+      if (drawStep >= width/2 * step) {
         noLoop();
         return;
       }
       // this.fourierWaveY.pos.x = width/2; //* unitsPerWindow;
       strokeWeight(2);
       this.fourierWaveY.show(true, true);
-      this.fourierWaveY.offsetPoints_X(step * width/2 / (unitLength*unitsPerWindow) * mouseX/width);
+      this.fourierWaveY.offsetPoints_X(1/step * 2*mouseX/width);
       this.fourierWaveY.update();
       this.fourierWaveY.deleteExcess();
-      drawStep += (float)mouseX/width; // += step*unitLength/60 * 2*mouseX/width;
+      drawStep += (float)2*mouseX/width; // += step*unitLength/60 * 2*mouseX/width;
       // frameRate(5);
     }
   }
