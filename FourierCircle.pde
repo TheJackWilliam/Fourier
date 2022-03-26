@@ -6,7 +6,7 @@ class FourierCircle {
     this.freq = _freq;
   }
   public void update() {
-    this.phase += TWO_PI/100*this.freq * 2*mouseX/width;
+    this.phase += TWO_PI*this.freq/100 * 2*mouseX/width;
     if (this.phase >= TWO_PI) this.phase %= TWO_PI;
   }
   public void drawLine(FloatVec _pos, float _phase) {

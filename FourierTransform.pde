@@ -16,7 +16,7 @@ class FourierTransform {
   public void compute_Y(float _x, float _y) {
     push();
     translate(_x, _y);
-    for (int i = 0; i < freqRange/freqStep/60/timeToCompute; i++) {
+    for (int i = 0; i < freqRange/freqStep/60/computeTime; i++) {
       if (freq < freqRange) {
         this.complexWave_Y.add(waveform.calcComplex_Y(freq, i == 0));
         freq += freqStep;
@@ -163,6 +163,22 @@ class FourierTransform {
         }
       }
       
+      else if (method == "all") {
+        if ((i * step) % 1 == 0) {
+          maxCurrent = this.complexWave_Y.get(i);
+      
+          this.fourierWaveY.addCircle(new FourierCircle(maxCurrent.magnitude()*step/unitsPerWindow/3, maxCurrent.phase() - HALF_PI, i*freqStep));
+          this.fourierWaveY.addCircle(new FourierCircle(maxCurrent.magnitude()*step/unitsPerWindow/3, -maxCurrent.phase() - HALF_PI, -i*freqStep));
+          
+          //println("Mag:", maxCurrent.magnitude());
+          //println("Phase:", maxCurrent.phase());
+          //println("Freq:", i*freqStep);
+          
+          stroke(255);
+          line((float)i/this.complexWave_Y.size()*width/2, height/2, (float)i/this.complexWave_Y.size()*width/2, height);
+        }
+      }
+      
       else {
         println("error, invalid method used in FourierTransfrom.createFourier()");
         noLoop();
@@ -185,7 +201,7 @@ class FourierTransform {
   }
   
   public void showFourierWave_Y() {
-    if (this.doneFourier && !this.drawFourier) this.createFourier_Y("peak");
+    if (this.doneFourier && !this.drawFourier) this.createFourier_Y("all");
     else if (this.drawFourier) {     
       stroke(255);
       strokeWeight(1);

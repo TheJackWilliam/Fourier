@@ -2,7 +2,7 @@ FourierTransform fourierTransform;
 Waveform wave;
 boolean run = false;
 
-float step, unitLength, freqStep = 0.005, freqRange = 32, unitsPerWindow = 16, timeToCompute = 4;
+float step, unitLength, freqStep = 0.005, freqRange = 64, unitsPerWindow = 4, computeTime = 2;
 
 void setup() { //<>//
   size(1200,800);
@@ -13,6 +13,8 @@ void setup() { //<>//
   //// Use this for the wave versions
   unitLength = width/2 / unitsPerWindow;
   step = 100/unitLength;
+  
+  println(step);
   
   //println(unitLength*unitsPerWindow);
   //println(unitLength/unitsPerWindow/step);
@@ -31,6 +33,13 @@ void setup() { //<>//
   //ArrayList<FloatVec> floatWave = new ArrayList<FloatVec>();
   //for (float i = 0; i < TWO_PI; i += 1/step) {
   //  floatWave.add(new FloatVec(height/5*cos(i)+width/4, height/5*sin(i)));
+  //}
+  //wave = new Waveform(floatWave, width/2);
+  
+  //// Line 
+  //ArrayList<FloatVec> floatWave = new ArrayList<FloatVec>();
+  //for (float i = 0; i < width/2; i += 1/step) {
+  //  floatWave.add(new FloatVec(i, height/4 * i/(width/2)));
   //}
   //wave = new Waveform(floatWave, width/2);
   
