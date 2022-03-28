@@ -2,9 +2,9 @@ FourierTransform fourierTransform;
 Waveform wave;
 boolean run = false;
 
-float step, unitLength, freqStep = 0.005, freqRange = 64, unitsPerWindow = 4, computeTime = 2;
+float step, unitLength, freqStep = 0.005, freqRange = 64, unitsPerWindow = 1, computeTime = 60, stepConst = 1000;
 
-void setup() { //<>//
+void setup() { //<>// //<>//
   size(1200,800);
   noFill();
   stroke(255, 255, 255, 255/8);
@@ -12,9 +12,10 @@ void setup() { //<>//
   
   //// Use this for the wave versions
   unitLength = width/2 / unitsPerWindow;
-  step = 100/unitLength;
+  println(unitLength);
+  step = stepConst/unitLength;
   
-  println(step);
+  println(freqStep*unitLength);
   
   //println(unitLength*unitsPerWindow);
   //println(unitLength/unitsPerWindow/step);
@@ -22,19 +23,19 @@ void setup() { //<>//
   //fWave = new FourierWave(new FloatVec(width/2, height/2));
   
   //// Domain space, Amplitude, Frequency, Phase (cosine)
-  //wave = new WaveForm(width*1/2, height/(16+random(-4,4)), random(1,5), random(-HALF_PI, HALF_PI));
-  //wave.addFloatWave(new WaveForm(width*1/2, height/(16+random(-4,4)), random(1,freqRange), random(-HALF_PI, HALF_PI)));
-  //wave.addFloatWave(new WaveForm(width*1/2, height/(16+random(-4,4)), random(1,freqRange), random(-HALF_PI, HALF_PI)));
+  //wave = new Waveform(width*1/2, height/(16+random(-4,4)), random(1,5), random(-HALF_PI, HALF_PI));
+  //wave.addFloatWave(new Waveform(width*1/2, height/(16+random(-4,4)), random(1,freqRange), random(-HALF_PI, HALF_PI)));
+  //wave.addFloatWave(new Waveform(width*1/2, height/(16+random(-4,4)), random(1,freqRange), random(-HALF_PI, HALF_PI)));
   
-  // Sqaure Wave
-  wave = new Waveform(width*1/2, height/5);
+  //// Sqaure Wave
+  //wave = new Waveform(width*1/2, height/5);
   
-  //// Circle
-  //ArrayList<FloatVec> floatWave = new ArrayList<FloatVec>();
-  //for (float i = 0; i < TWO_PI; i += 1/step) {
-  //  floatWave.add(new FloatVec(height/5*cos(i)+width/4, height/5*sin(i)));
-  //}
-  //wave = new Waveform(floatWave, width/2);
+  // Circle
+  ArrayList<FloatVec> floatWave = new ArrayList<FloatVec>();
+  for (float i = 0; i < width/2; i += 1/step) {
+    floatWave.add(new FloatVec(height/5*cos(TWO_PI * i/(width/2))+width/4, height/5*sin(TWO_PI * i/(width/2))));
+  }
+  wave = new Waveform(floatWave, width/2);
   
   //// Line 
   //ArrayList<FloatVec> floatWave = new ArrayList<FloatVec>();
@@ -122,6 +123,11 @@ void draw() {
     fourierTransform.showComplexMag_Y(0, height*7/12);
     fourierTransform.showComplexComponents_Y(0, height*9/12);
     fourierTransform.showComplexPhase_Y(0, height*11/12);
+    
+    // draw reference
+    stroke(255,50);
+    strokeWeight(4);
+    wave.showFloatWave(width/2, height*3/4);  
     
     // draw inverse fourier
     fourierTransform.showFourierWave_Y();

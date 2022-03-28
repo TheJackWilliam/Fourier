@@ -3,7 +3,7 @@
 class FourierTransform {
   private Waveform waveform;
   private ArrayList<Complex> complexWave_Y = new ArrayList<Complex>();
-  private FourierWave fourierWaveY = new FourierWave(new FloatVec(width/2,  height*3/4));
+  private FourierWave fourierWaveY = new FourierWave(new FloatVec(width/2,  height));
   public boolean doneFourier = false, drawFourier = false;
   private float span, freq = 0, drawStep = 0, threshold = 0.2;
   
@@ -16,7 +16,7 @@ class FourierTransform {
   public void compute_Y(float _x, float _y) {
     push();
     translate(_x, _y);
-    for (int i = 0; i < freqRange/freqStep/60/computeTime; i++) {
+    for (int i = 0; i < freqRange/freqStep/60/computeTime * 10*mouseX/width; i++) {
       if (freq < freqRange) {
         this.complexWave_Y.add(waveform.calcComplex_Y(freq, i == 0));
         freq += freqStep;
@@ -164,19 +164,19 @@ class FourierTransform {
       }
       
       else if (method == "all") {
-        if ((i * step) % 1 == 0) {
+        //if (i  % int(freqRange/freqStep/width/2) == 0) {
           maxCurrent = this.complexWave_Y.get(i);
       
-          this.fourierWaveY.addCircle(new FourierCircle(maxCurrent.magnitude()*step/unitsPerWindow/3, maxCurrent.phase() - HALF_PI, i*freqStep));
-          this.fourierWaveY.addCircle(new FourierCircle(maxCurrent.magnitude()*step/unitsPerWindow/3, -maxCurrent.phase() - HALF_PI, -i*freqStep));
+          this.fourierWaveY.addCircle(new FourierCircle(maxCurrent.magnitude()*freqStep*unitsPerWindow*(2-unitsPerWindow/100), maxCurrent.phase() - HALF_PI, i*freqStep)); // mult by freqStep :: div by unitsPerWindow? slightly off :: 
+          this.fourierWaveY.addCircle(new FourierCircle(maxCurrent.magnitude()*freqStep*unitsPerWindow*(2-unitsPerWindow/100), -maxCurrent.phase() - HALF_PI, -i*freqStep)); // *freqStep*unitLength/5 works at unitsPerWindow = 8
           
           //println("Mag:", maxCurrent.magnitude());
           //println("Phase:", maxCurrent.phase());
           //println("Freq:", i*freqStep);
           
-          stroke(255);
-          line((float)i/this.complexWave_Y.size()*width/2, height/2, (float)i/this.complexWave_Y.size()*width/2, height);
-        }
+          //stroke(255);
+          //line((float)i/this.complexWave_Y.size()*width/2, height/2, (float)i/this.complexWave_Y.size()*width/2, height);
+        //}
       }
       
       else {
@@ -213,12 +213,12 @@ class FourierTransform {
       }
       // this.fourierWaveY.pos.x = width/2; //* unitsPerWindow;
       strokeWeight(2);
-      this.fourierWaveY.show(true, true);
+      this.fourierWaveY.show(true, false);
       //this.fourierWaveY.offsetPoints_X(1/step * 2*mouseX/width);
       this.fourierWaveY.update();
       this.fourierWaveY.points.get(this.fourierWaveY.points.size()-1).x += drawStep/step;
       this.fourierWaveY.deleteExcess();
-      drawStep += (float)2*mouseX/width; // += step*unitLength/60 * 2*mouseX/width;
+      drawStep += (float)10*mouseX/width; // += step*unitLength/60 * 2*mouseX/width;
       // frameRate(5);
     }
   }

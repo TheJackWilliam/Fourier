@@ -62,11 +62,12 @@ class Waveform {
   }
   
   private void calcMin() {
-    float min = this.floatWave.get(0).y;
-    for (int i = 1; i < this.floatWave.size(); i++) {
-      if (this.floatWave.get(i).y < min) min = this.floatWave.get(i).y;
-    }
-    this.min = min;
+    //float min = this.floatWave.get(0).y;
+    //for (int i = 1; i < this.floatWave.size(); i++) {
+    //  if (this.floatWave.get(i).y < min) min = this.floatWave.get(i).y;
+    //}
+    //this.min = min;
+    this.min = -height/4;
   }
   
   // Revolution
