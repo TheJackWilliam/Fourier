@@ -15,4 +15,4 @@ See the demo below for demo for how this performs.
 * and the bottom right shows the recreation of the waveform using the fourier transform magnitude and phase information
 
 ## Latest Working Image
-![Working Fourier Transform](2D Fourier.gif)
+![Working Fourier Transform](2D_Fourier.png)
