@@ -27,6 +27,8 @@ class FourierWave {
         c.drawLine(prevOffset, prevPhase);
       }
       prevOffset.copy(offset);
+      //println(c.mag, " ", c.freq, " ", c.phase);
+      //break;
     }
   }
   public void update() {

@@ -2,22 +2,26 @@
 
 class FourierTransform {
   private Waveform waveform;
+  private ArrayList<Complex> complexWave_X = new ArrayList<Complex>();
   private ArrayList<Complex> complexWave_Y = new ArrayList<Complex>();
-  private FourierWave fourierWaveY = new FourierWave(new FloatVec(width/2,  height));
+  private FourierWave fourierWaveX = new FourierWave(new FloatVec(width*3/4, height));
+  private FourierWave fourierWaveY = new FourierWave(new FloatVec(width/2, height*3/4));
+  private ArrayList<FloatVec> fourierWave = new ArrayList<FloatVec>();
   public boolean doneFourier = false, drawFourier = false;
   private float span, freq = 0, drawStep = 0, threshold = 0.2;
   
   FourierTransform(Waveform _waveform, float _span) {
     this.waveform = _waveform;
     this.span = _span;
-    waveform.calcMin();
+    // waveform.calcMin();
   }
   
-  public void compute_Y(float _x, float _y) {
+  public void compute(float _x, float _y) {
     push();
     translate(_x, _y);
     for (int i = 0; i < freqRange/freqStep/60/computeTime * 10*mouseX/width; i++) {
       if (freq < freqRange) {
+        this.complexWave_X.add(waveform.calcComplex_X(freq, i == 0));
         this.complexWave_Y.add(waveform.calcComplex_Y(freq, i == 0));
         freq += freqStep;
       } else {
@@ -28,57 +32,64 @@ class FourierTransform {
   }
   
   // fourier mag representation
-  public void showComplexMag_Y(float _x, float _y) {
+  public void showComplexMag(float _x, float _y) {
     push();
     translate(_x, _y);
-    noFill();
-    beginShape();
     stroke(255,0,255);
-    for (int i = 0; i < this.complexWave_Y.size(); i++) {
-      vertex(i * this.span/this.complexWave_Y.size() * freq/freqRange, -this.complexWave_Y.get(i).magnitude()); 
-    }
+    noFill();
+    
+    beginShape();
+    for (int i = 0; i < this.complexWave_X.size(); i++) vertex(i * this.span/this.complexWave_X.size() * freq/freqRange, -this.complexWave_X.get(i).magnitude()); 
     endShape();
-    stroke(255,0,255, 255/4);
-    if (this.drawFourier) line(0, -this.threshold, width/2, -this.threshold);
+    beginShape();
+    for (int i = 0; i < this.complexWave_Y.size(); i++) vertex(i * this.span/this.complexWave_Y.size() * freq/freqRange, -this.complexWave_Y.get(i).magnitude()); 
+    endShape();
     pop();
   }
   
   // fourier phase representation
-  public void showComplexPhase_Y(float _x, float _y) {
+  public void showComplexPhase(float _x, float _y) {
     push();
     translate(_x, _y);
+    stroke(0,255,0);
     noFill();
     beginShape();
-    stroke(0,255,0);
-    for (int i = 0; i < this.complexWave_Y.size(); i++) {
-      vertex(i * this.span/this.complexWave_Y.size() * freq/freqRange, -this.complexWave_Y.get(i).phase()*45/PI); 
-    }
+    for (int i = 0; i < this.complexWave_X.size(); i++) vertex(i * this.span/this.complexWave_X.size() * freq/freqRange, -this.complexWave_X.get(i).phase()*45/PI); 
+    endShape();
+    beginShape();
+    for (int i = 0; i < this.complexWave_Y.size(); i++) vertex(i * this.span/this.complexWave_Y.size() * freq/freqRange, -this.complexWave_Y.get(i).phase()*45/PI); 
     endShape();
     pop();
   }
   
   // fourier complex components representation
-  public void showComplexComponents_Y(float _x, float _y) {
+  public void showComplexComponents(float _x, float _y) {
     push();
     translate(_x, _y);
     noFill();
+    
     beginShape();
     stroke(255,0,0);
-    for (int i = 0; i < this.complexWave_Y.size(); i++) {
-      vertex(i * this.span/this.complexWave_Y.size() * freq/freqRange, -this.complexWave_Y.get(i).a); 
-    }
+    for (int i = 0; i < this.complexWave_X.size(); i++) vertex(i * this.span/this.complexWave_X.size() * freq/freqRange, -this.complexWave_X.get(i).a); 
     endShape();
     beginShape();
     stroke(0,0,255);
-    for (int i = 0; i < this.complexWave_Y.size(); i++) {
-      vertex(i * this.span/this.complexWave_Y.size() * freq/freqRange, -this.complexWave_Y.get(i).b); 
-    }
+    for (int i = 0; i < this.complexWave_X.size(); i++) vertex(i * this.span/this.complexWave_X.size() * freq/freqRange, -this.complexWave_X.get(i).b); 
+    endShape();
+    
+    beginShape();
+    stroke(255,0,0);
+    for (int i = 0; i < this.complexWave_Y.size(); i++) vertex(i * this.span/this.complexWave_Y.size() * freq/freqRange, -this.complexWave_Y.get(i).a); 
+    endShape();
+    beginShape();
+    stroke(0,0,255);
+    for (int i = 0; i < this.complexWave_Y.size(); i++) vertex(i * this.span/this.complexWave_Y.size() * freq/freqRange, -this.complexWave_Y.get(i).b); 
     endShape();
     pop();
   }
   
   // Final result
-  private void createFourier_Y(String method) {
+  private void createFourier(String method) {
     if (!this.doneFourier) return;
     if (this.drawFourier) return;
     // this.threshold = 1;
@@ -126,6 +137,9 @@ class FourierTransform {
             
             // compare current max to max after
             if (maxCurrent.magnitude() > maxAfter.magnitude()) {
+              this.fourierWaveX.addCircle(new FourierCircle(maxCurrent.magnitude()*2, maxCurrent.phase(), i*freqStep));
+              this.fourierWaveX.addCircle(new FourierCircle(maxCurrent.magnitude()*2, -maxCurrent.phase(), -i*freqStep));
+              
               this.fourierWaveY.addCircle(new FourierCircle(maxCurrent.magnitude()*2, maxCurrent.phase() - HALF_PI, i*freqStep));
               this.fourierWaveY.addCircle(new FourierCircle(maxCurrent.magnitude()*2, -maxCurrent.phase() - HALF_PI, -i*freqStep));
               
@@ -142,7 +156,31 @@ class FourierTransform {
       }
       
       else if (method == "any") {
+        if (this.isMax_X(i, this.complexWave_X.size())) {
+          int temp = i;
+          
+          // center i
+          index = i;
+          while (this.isMax_X(index+1, this.complexWave_X.size())) index++;
+          i = (i+index)/2;
+          
+          maxCurrent = this.complexWave_X.get(i);
+      
+          this.fourierWaveX.addCircle(new FourierCircle(maxCurrent.magnitude()*2, maxCurrent.phase(), i*freqStep));
+          this.fourierWaveX.addCircle(new FourierCircle(maxCurrent.magnitude()*2, -maxCurrent.phase(), -i*freqStep));
+          
+          println("Mag:", maxCurrent.magnitude());
+          println("Phase:", maxCurrent.phase());
+          println("Freq:", i*freqStep);
+          
+          stroke(255);
+          line((float)i/this.complexWave_X.size()*width/2, height/2, (float)i/this.complexWave_Y.size()*width/2, height);
+          
+          i = temp;
+        }
+        
         if (this.isMax_Y(i, this.complexWave_Y.size())) {
+          int temp = i;
           
           // center i
           index = i;
@@ -160,19 +198,26 @@ class FourierTransform {
           
           stroke(255);
           line((float)i/this.complexWave_Y.size()*width/2, height/2, (float)i/this.complexWave_Y.size()*width/2, height);
+          
+          i = temp;
         }
       }
       
       else if (method == "all") {
         //if (i  % int(freqRange/freqStep/width/2) == 0) {
-          maxCurrent = this.complexWave_Y.get(i);
-      
-          this.fourierWaveY.addCircle(new FourierCircle(maxCurrent.magnitude()*freqStep*unitsPerWindow*(2-unitsPerWindow/100), maxCurrent.phase() - HALF_PI, i*freqStep)); // mult by freqStep :: div by unitsPerWindow? slightly off :: 
-          this.fourierWaveY.addCircle(new FourierCircle(maxCurrent.magnitude()*freqStep*unitsPerWindow*(2-unitsPerWindow/100), -maxCurrent.phase() - HALF_PI, -i*freqStep)); // *freqStep*unitLength/5 works at unitsPerWindow = 8
+          Complex current_X = this.complexWave_X.get(i);
+          Complex current_Y = this.complexWave_Y.get(i);
           
-          //println("Mag:", maxCurrent.magnitude());
-          //println("Phase:", maxCurrent.phase());
+          this.fourierWaveX.addCircle(new FourierCircle(current_X.magnitude()*freqStep*unitsPerWindow*(2-unitsPerWindow/100), current_X.phase(), i*freqStep)); // mult by freqStep :: div by unitsPerWindow? slightly off :: 
+          this.fourierWaveX.addCircle(new FourierCircle(current_X.magnitude()*freqStep*unitsPerWindow*(2-unitsPerWindow/100), -current_X.phase(), -i*freqStep)); // *freqStep*unitLength/5 works at unitsPerWindow = 8
+          
+          this.fourierWaveY.addCircle(new FourierCircle(current_Y.magnitude()*freqStep*unitsPerWindow*(2-unitsPerWindow/100), current_Y.phase() - HALF_PI, i*freqStep)); // mult by freqStep :: div by unitsPerWindow? slightly off :: 
+          this.fourierWaveY.addCircle(new FourierCircle(current_Y.magnitude()*freqStep*unitsPerWindow*(2-unitsPerWindow/100), -current_Y.phase() - HALF_PI, -i*freqStep)); // *freqStep*unitLength/5 works at unitsPerWindow = 8
+          
+          //println("Mag:", current_Y.magnitude());
+          //println("Phase:", current_Y.phase());
           //println("Freq:", i*freqStep);
+          //if (i == 1) break;
           
           //stroke(255);
           //line((float)i/this.complexWave_Y.size()*width/2, height/2, (float)i/this.complexWave_Y.size()*width/2, height);
@@ -181,14 +226,25 @@ class FourierTransform {
       
       else {
         println("error, invalid method used in FourierTransfrom.createFourier()");
-        noLoop();
       }
     }
     run = false;
     this.drawFourier = true;
   }
   
-   private boolean isMax_Y(int i, int upper) {
+  private boolean isMax_X(int i, int upper) {
+    int lowerIndex = i-1, upperIndex = i+1;
+    if (lowerIndex < 0) return false;
+    if (upperIndex >= upper) return false;
+    
+    if (this.complexWave_X.get(lowerIndex).magnitude() <= this.complexWave_X.get(i).magnitude() && this.complexWave_X.get(i).magnitude() >= this.complexWave_X.get(upperIndex).magnitude()) {
+      if (this.complexWave_X.get(i).magnitude() > this.threshold) return true;
+      else return false;
+    }
+    else return false;
+  }
+  
+  private boolean isMax_Y(int i, int upper) {
     int lowerIndex = i-1, upperIndex = i+1;
     if (lowerIndex < 0) return false;
     if (upperIndex >= upper) return false;
@@ -200,28 +256,94 @@ class FourierTransform {
     else return false;
   }
   
-  public void showFourierWave_Y() {
-    if (this.doneFourier && !this.drawFourier) this.createFourier_Y("all");
+  public void updateFourierWave() {
+    if (this.doneFourier && !this.drawFourier) this.createFourier("all");
     else if (this.drawFourier) {     
       stroke(255);
       strokeWeight(1);
+      this.fourierWaveX.showLine();
       this.fourierWaveY.showLine();
+      this.showFourierWave();
       
-      if (drawStep >= width/2 * step) {
+      if (drawStep > width/2 * step) {
         noLoop();
         return;
       }
+
       // this.fourierWaveY.pos.x = width/2; //* unitsPerWindow;
       strokeWeight(2);
+      this.fourierWaveX.show(true, false);
       this.fourierWaveY.show(true, false);
       //this.fourierWaveY.offsetPoints_X(1/step * 2*mouseX/width);
+      this.fourierWaveX.update();
       this.fourierWaveY.update();
-      this.fourierWaveY.points.get(this.fourierWaveY.points.size()-1).x += drawStep/step;
+      
+      this.fourierWave.add(new FloatVec(this.fourierWaveX.points.get(this.fourierWaveX.points.size()-1).x, this.fourierWaveY.points.get(this.fourierWaveY.points.size()-1).y));
+      
+      // this.fourierWaveX.points.get(this.fourierWaveX.points.size()-1).y -= drawStep/step; // DO NOT NEED TO FIGURE OUT
+      this.fourierWaveX.deleteExcess();
       this.fourierWaveY.deleteExcess();
       drawStep += (float)10*mouseX/width; // += step*unitLength/60 * 2*mouseX/width;
       // frameRate(5);
+      
+      // showFourierWave();
     }
   }
+  
+  private void showFourierWave() {
+    if (!this.doneFourier || !this.drawFourier) return;
+    beginShape();
+    for (int i = 0; i < this.fourierWave.size(); i++) {
+      vertex(this.fourierWave.get(i).x, this.fourierWave.get(i).y);
+    }
+    endShape();
+  }
+  
+  //public void showFourierWave_X() { // FOR TESTING ONLY
+  //  if (this.doneFourier && !this.drawFourier) this.createFourier("all");
+  //  else if (this.drawFourier) {     
+  //    stroke(255);
+  //    strokeWeight(1);
+  //    this.fourierWaveX.showLine();
+      
+  //    if (drawStep >= height/2 * step) {
+  //      noLoop();
+  //      return;
+  //    }
+  //    // this.fourierWaveY.pos.x = width/2; //* unitsPerWindow;
+  //    strokeWeight(2);
+  //    this.fourierWaveX.show(true, false);
+  //    //this.fourierWaveY.offsetPoints_X(1/step * 2*mouseX/width);
+  //    this.fourierWaveX.update();
+  //    this.fourierWaveX.points.get(this.fourierWaveX.points.size()-1).y -= drawStep/step; // DO NOT NEED TO FIGURE OUT
+  //    this.fourierWaveX.deleteExcess();
+  //    drawStep += (float)10*mouseX/width; // += step*unitLength/60 * 2*mouseX/width;
+  //    // frameRate(5);
+  //  }
+  //}
+  
+  //public void showFourierWave_Y() {
+  //  if (this.doneFourier && !this.drawFourier) this.createFourier("all");
+  //  else if (this.drawFourier) {     
+  //    stroke(255);
+  //    strokeWeight(1);
+  //    this.fourierWaveY.showLine();
+      
+  //    if (drawStep >= width/2 * step) {
+  //      noLoop();
+  //      return;
+  //    }
+  //    // this.fourierWaveY.pos.x = width/2; //* unitsPerWindow;
+  //    strokeWeight(2);
+  //    this.fourierWaveY.show(true, false);
+  //    //this.fourierWaveY.offsetPoints_X(1/step * 2*mouseX/width);
+  //    this.fourierWaveY.update();
+  //    this.fourierWaveY.points.get(this.fourierWaveY.points.size()-1).x += drawStep/step;
+  //    this.fourierWaveY.deleteExcess();
+  //    drawStep += (float)10*mouseX/width; // += step*unitLength/60 * 2*mouseX/width;
+  //    // frameRate(5);
+  //  }
+  //}
   
   public void addPoint_Y(Complex _c) {
     this.complexWave_Y.add(_c);

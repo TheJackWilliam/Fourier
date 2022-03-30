@@ -2,7 +2,7 @@
 
 class Waveform {
   public ArrayList<FloatVec> floatWave = new ArrayList<FloatVec>();
-  private float span, min;
+  private float span;
   
   // floatWaveform
   Waveform() {}
@@ -13,7 +13,7 @@ class Waveform {
     
     // Sine floatWave
     for (float i = 0; i < this.span; i += 1/step) {
-      this.floatWave.add(new FloatVec(i, _mag*cos(TWO_PI * _freq * i / unitLength + _phase)));
+      this.floatWave.add(new FloatVec(i - this.span/2, _mag*cos(TWO_PI * _freq * i / unitLength + _phase)));
     }
   }
   
@@ -23,8 +23,8 @@ class Waveform {
     
     // Square floatWave
     for (float i = 0; i < this.span; i += 1/step) {
-      if (i%unitLength < unitLength/2) this.floatWave.add(new FloatVec(i, _mag));
-      else this.floatWave.add(new FloatVec(i, -_mag));
+      if (i%unitLength < unitLength/2) this.floatWave.add(new FloatVec(i - this.span/2, _mag));
+      else this.floatWave.add(new FloatVec(i - this.span/2, -_mag));
     }
   }
   
@@ -61,16 +61,43 @@ class Waveform {
     }
   }
   
-  private void calcMin() {
-    //float min = this.floatWave.get(0).y;
-    //for (int i = 1; i < this.floatWave.size(); i++) {
-    //  if (this.floatWave.get(i).y < min) min = this.floatWave.get(i).y;
-    //}
-    //this.min = min;
-    this.min = -height/4;
-  }
+  //public void calcMin() {
+  //  //float min = this.floatWave.get(0).y;
+  //  //for (int i = 1; i < this.floatWave.size(); i++) {
+  //  //  if (this.floatWave.get(i).y < min) min = this.floatWave.get(i).y;
+  //  //}
+  //  //this.min = min;
+  //  this.min_X = 0;
+  //  this.min_Y = 0;
+  //}
   
   // Revolution
+  public Complex calcComplex_X(float _freq, boolean _draw) {
+    // if (this.doneFourier) return; //<>//
+    // boolean fullRevolution = false;
+    float mag, phase = 0;
+    Complex avg = new Complex();
+    noFill();
+    beginShape();
+    stroke(255);
+    for (int i = 0; i < this.floatWave.size(); i++) {
+      mag = floatWave.get(i).x*1/2;
+      if (_draw) vertex(mag*cos(phase), -mag*sin(phase));
+      // if (fullRevolution) 
+      avg.add(mag*cos(phase), mag*sin(phase));
+      phase -= TWO_PI*_freq/unitLength/step;
+      // if (phase <= -TWO_PI) fullRevolution = true;
+    }
+    
+    endShape();
+    stroke(255,0,0);
+    fill(255,0,0);
+    avg.div(this.floatWave.size());
+    if (_draw) circle(avg.a, -avg.b, 5);
+    // this.complexWave.add(avg);
+    return avg;
+  }
+  
   public Complex calcComplex_Y(float _freq, boolean _draw) {
     // if (this.doneFourier) return;
     // boolean fullRevolution = false;
@@ -80,7 +107,7 @@ class Waveform {
     beginShape();
     stroke(255);
     for (int i = 0; i < this.floatWave.size(); i++) {
-      mag = (floatWave.get(i).y - this.min)*1/2;
+      mag = floatWave.get(i).y*1/2;
       if (_draw) vertex(mag*cos(phase), -mag*sin(phase));
       // if (fullRevolution) 
       avg.add(mag*cos(phase), mag*sin(phase));
