@@ -1,8 +1,11 @@
 FourierTransform fourierTransform;
 Waveform wave;
-boolean run = false;
+boolean run = false, drawing;
 
 float step, unitLength, freqStep = 0.005, freqRange = 64, unitsPerWindow = 1, computeTime = 6, stepConst = 1000;
+String method = "all";
+
+ArrayList<FloatVec> floatWave = new ArrayList<FloatVec>();
 
 void setup() { //<>// //<>// //<>//
   size(1200,800);
@@ -27,30 +30,38 @@ void setup() { //<>// //<>// //<>//
   //wave.addFloatWave(new Waveform(width*1/2, height/(16+random(-4,4)), random(1,16), random(-HALF_PI, HALF_PI)));
   //wave.addFloatWave(new Waveform(width*1/2, height/(16+random(-4,4)), random(1,16), random(-HALF_PI, HALF_PI)));
   
-  // Sqaure Wave
-  wave = new Waveform(width*1/2, height/5);
+  //// Sqaure Wave
+  //wave = new Waveform(width*1/2, height/5);
   
   //// Circle
-  //ArrayList<FloatVec> floatWave = new ArrayList<FloatVec>();
+  //floatWave = new ArrayList<FloatVec>();
   //for (float i = 0; i < width/2; i += 1/step) {
-  //  floatWave.add(new FloatVec(height/5*cos(TWO_PI * i/(width/2))+width/4, height/5*sin(TWO_PI * i/(width/2))));
+  //  floatWave.add(new FloatVec(height/5*cos(TWO_PI * i/(width/2)), height/5*sin(TWO_PI * i/(width/2))));
   //}
   //wave = new Waveform(floatWave, width/2);
   
   //// Line 
-  //ArrayList<FloatVec> floatWave = new ArrayList<FloatVec>();
+  //floatWave = new ArrayList<FloatVec>();
   //for (float i = 0; i < width/2; i += 1/step) {
   //  floatWave.add(new FloatVec(i, height/4 * i/(width/2)));
   //}
   //wave = new Waveform(floatWave, width/2);
   
-  fourierTransform = new FourierTransform(wave, width/2);
+  // draw
+  drawing = true;
   
   background(20);
   
+  // separate windows
   stroke(255);
   strokeWeight(1);
-  wave.showFloatWave(width/4, height*1/4);  
+  line(width/2, 0, width/2, height);
+  line(0, height/2, width, height/2);
+  
+  //stroke(255);
+  //strokeWeight(1);
+  //wave.showFloatWave(width/4, height*1/4);
+  //fourierTransform = new FourierTransform(wave, width/2);
 }
 
 void draw() {
@@ -134,8 +145,37 @@ void draw() {
     
     fourierTransform.updateFourierWave();
   }
+  else if (drawing == true) {
+    beginShape();
+    for (int i = 0; i < floatWave.size(); i++) vertex(floatWave.get(i).x + width/4, -(floatWave.get(i).y - height/4));
+    endShape();
+  }
 }
 
 void mouseClicked() {
+  println("IN MOUSECLICKED");
   run = run == false;
+}
+
+void mouseDragged() {
+  println("IN MOUSEDRAGGED");
+  if (drawing == true) {
+    floatWave.add(new FloatVec(mouseX - width/4, -(mouseY - height/4)));
+  }
+}
+
+void mouseReleased() {
+  if (drawing == true) {
+    drawing = false;
+    wave = new Waveform(floatWave, width/2);
+    
+    println("IN MOUSERELEASED");
+    
+    stroke(255);
+    strokeWeight(1);
+    wave.showFloatWave(width/4, height*1/4); 
+    fourierTransform = new FourierTransform(wave, width/2);
+    
+    run = true;
+  }
 }

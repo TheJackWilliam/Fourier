@@ -81,7 +81,7 @@ class Waveform {
     beginShape();
     stroke(255);
     for (int i = 0; i < this.floatWave.size(); i++) {
-      mag = floatWave.get(i).x*1/2;
+      mag = floatWave.get(i).x;
       if (_draw) vertex(mag*cos(phase), -mag*sin(phase));
       // if (fullRevolution) 
       avg.add(mag*cos(phase), mag*sin(phase));
@@ -107,7 +107,7 @@ class Waveform {
     beginShape();
     stroke(255);
     for (int i = 0; i < this.floatWave.size(); i++) {
-      mag = floatWave.get(i).y*1/2;
+      mag = floatWave.get(i).y;
       if (_draw) vertex(mag*cos(phase), -mag*sin(phase));
       // if (fullRevolution) 
       avg.add(mag*cos(phase), mag*sin(phase));
