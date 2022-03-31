@@ -13,3 +13,6 @@ See the demo below for demo for how this performs.
 * the top right frame shows wrapping the input around the complex frame and measuring the resulting 'center of mass',
 * the bottom left frame shows the fourier transform magnitude, complex components, and phase from top to bottom,
 * and the bottom right shows the recreation of the waveform using the fourier transform magnitude and phase information
+
+## Latest Working Image
+![Working Fourier Transform](2D_Fourier.png)

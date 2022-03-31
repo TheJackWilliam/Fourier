@@ -12,6 +12,9 @@ class Complex {
     float offset = 0;
     if (this.a < 0 && this.b > 0) offset += PI;
     if (this.a < 0 && this.b < 0) offset -= PI;
+    if (this.a == 0 && this.b > 0) return PI;
+    if (this.a == 0 & this.b == 0) return 0;
+    if (this.a == 0 && this.b < 0) return -PI;
     return atan(this.b / this.a) + offset; 
   }
   public void add(float _a, float _b) {
