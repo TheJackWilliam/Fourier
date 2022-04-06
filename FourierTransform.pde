@@ -204,15 +204,15 @@ class FourierTransform {
       }
       
       else if (method == "all") {
-        //if (i  % int(freqRange/freqStep/width/2) == 0) {
+        if (i % skip == 0) { // take average between points next
           Complex current_X = this.complexWave_X.get(i);
           Complex current_Y = this.complexWave_Y.get(i);
           
-          this.fourierWaveX.addCircle(new FourierCircle(current_X.magnitude()*freqStep*unitsPerWindow * floatWave.size()/(step*this.span), current_X.phase(), i*freqStep)); // mult by freqStep :: div by unitsPerWindow? slightly off :: 
-          this.fourierWaveX.addCircle(new FourierCircle(current_X.magnitude()*freqStep*unitsPerWindow * floatWave.size()/(step*this.span), -current_X.phase(), -i*freqStep)); // *freqStep*unitLength/5 works at unitsPerWindow = 8
+          this.fourierWaveX.addCircle(new FourierCircle(current_X.magnitude()*freqStep*unitsPerWindow * floatWave.size()/(step*this.span) * skip, current_X.phase(), i*freqStep)); // mult by freqStep :: div by unitsPerWindow? slightly off :: 
+          this.fourierWaveX.addCircle(new FourierCircle(current_X.magnitude()*freqStep*unitsPerWindow * floatWave.size()/(step*this.span) * skip, -current_X.phase(), -i*freqStep)); // *freqStep*unitLength/5 works at unitsPerWindow = 8
           
-          this.fourierWaveY.addCircle(new FourierCircle(current_Y.magnitude()*freqStep*unitsPerWindow * floatWave.size()/(step*this.span), current_Y.phase() - HALF_PI, i*freqStep)); // mult by freqStep :: div by unitsPerWindow? slightly off :: 
-          this.fourierWaveY.addCircle(new FourierCircle(current_Y.magnitude()*freqStep*unitsPerWindow * floatWave.size()/(step*this.span), -current_Y.phase() - HALF_PI, -i*freqStep)); // *freqStep*unitLength/5 works at unitsPerWindow = 8
+          this.fourierWaveY.addCircle(new FourierCircle(current_Y.magnitude()*freqStep*unitsPerWindow * floatWave.size()/(step*this.span) * skip, current_Y.phase() - HALF_PI, i*freqStep)); // mult by freqStep :: div by unitsPerWindow? slightly off :: 
+          this.fourierWaveY.addCircle(new FourierCircle(current_Y.magnitude()*freqStep*unitsPerWindow * floatWave.size()/(step*this.span) * skip, -current_Y.phase() - HALF_PI, -i*freqStep)); // *freqStep*unitLength/5 works at unitsPerWindow = 8
           
           //println("Mag:", current_Y.magnitude());
           //println("Phase:", current_Y.phase());
@@ -221,7 +221,7 @@ class FourierTransform {
           
           //stroke(255);
           //line((float)i/this.complexWave_Y.size()*width/2, height/2, (float)i/this.complexWave_Y.size()*width/2, height);
-        //}
+        }
       }
       
       else {

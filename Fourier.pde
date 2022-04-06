@@ -2,12 +2,13 @@ FourierTransform fourierTransform;
 Waveform wave;
 boolean run = false, drawing;
 
-float step, unitLength, freqStep = 0.005, freqRange = 64, unitsPerWindow = 1, computeTime = 6, stepConst = 1000;
+float step, unitLength, freqStep = 0.005;
+int freqRange = 64, unitsPerWindow = 1, computeTime = 6, stepConst = 1000, numFourier = 10, skip;
 String method = "all";
 
 ArrayList<FloatVec> floatWave = new ArrayList<FloatVec>();
 
-void setup() { //<>// //<>// //<>//
+void setup() { //<>//
   size(1200,800);
   noFill();
   stroke(255, 255, 255, 255/8);
@@ -17,6 +18,7 @@ void setup() { //<>// //<>// //<>//
   unitLength = width/2 / unitsPerWindow;
   println(unitLength);
   step = stepConst/unitLength;
+  skip = round(freqRange/freqStep/numFourier);
   
   println(freqStep*unitLength);
   
